@@ -61,33 +61,34 @@ class AddProgramActivity : AppCompatActivity() {
         }
 
 
+
         sb = ProgramDatabase.invoke(this)
         val repo = ProgramRepo(sb)
-    val sem = arrayOf<String>("Sem 1","Sem 2","Sem 3","Sem 4","Sem 5","Sem 6",)
+    val sem = arrayOf<String>("Sem 1","Sem 2","Sem 3","Sem 4","Sem 5","Sem 6")
     val semAdapter = ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,sem)
 
 
 
-    val unit = arrayOf("Unit 1","Unit 2","Unit 3","Unit 4",)
+    val unit = arrayOf("Unit 1","Unit 2","Unit 3","Unit 4")
     val unitAdapter = ArrayAdapter(this,androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,unit)
 
 
-    val sem1Subject = arrayOf("C Program","Html")
+    val sem1Subject = arrayOf("IPLC","HTML")
     val sem1Sub = ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,sem1Subject)
 
-    val sem2Subject = arrayOf("Dbms","Html/Js")
+    val sem2Subject = arrayOf("ACP","DBMS 1","HTML/JS")
     val sem2Sub = ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,sem2Subject)
 
-    val sem3Subject = arrayOf("C++","Acp")
+    val sem3Subject = arrayOf("OOCP","DS_ALGO")
     val sem3Sub = ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,sem3Subject)
 
-    val sem4Subject = arrayOf("C#","Java","Dbms 2")
+    val sem4Subject = arrayOf("CJ","DBMS 2","WPC#")
     val sem4Sub = ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,sem4Subject)
 
-    val sem5Subject = arrayOf("Python","Asp.net")
+    val sem5Subject = arrayOf("PYTHON","ASP.NET")
     val sem5Sub = ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,sem5Subject)
 
-    val sem6Subject = arrayOf("Web Application Dev")
+    val sem6Subject = arrayOf("WEB APP DEV")
     val sem6Sub = ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,sem6Subject)
 
     semSpinner.adapter = semAdapter
