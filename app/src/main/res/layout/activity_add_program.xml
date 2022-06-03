@@ -33,6 +33,7 @@
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/edId"
                 android:hint="Enter Id"
+                android:enabled="false"
                 android:inputType="numberDecimal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

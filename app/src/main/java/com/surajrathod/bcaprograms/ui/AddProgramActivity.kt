@@ -1,5 +1,6 @@
 package com.surajrathod.bcaprograms.ui
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -7,8 +8,10 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.surajrathod.bcaprograms.ProgramApplication
@@ -24,12 +27,10 @@ import com.surajrathod.bcaprograms.viewmodel.MainActivityViewModelFactory
 import com.surajrathod.bcaprograms.viewmodel.MainActvityViewModel
 import com.surajrathod.bcaprograms.viewmodel.PViewModel
 import kotlinx.android.synthetic.main.activity_add_program.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
 
 class AddProgramActivity : AppCompatActivity() {
 
@@ -41,14 +42,17 @@ class AddProgramActivity : AppCompatActivity() {
     }
 
     lateinit var sb : ProgramDatabase
-
+lateinit var retrofitBuilder : ApiInterface
     val adapter = ProgramAdapter(){}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_program)
 
-
+retrofitBuilder = Retrofit.Builder()
+    .addConverterFactory(GsonConverterFactory.create())
+    .baseUrl("https://desolate-ocean-39685.herokuapp.com/v1/")
+    .build().create(ApiInterface::class.java)
         pViewModel = ViewModelProvider(this).get(PViewModel::class.java)
 
 
@@ -137,10 +141,13 @@ class AddProgramActivity : AppCompatActivity() {
         btnEnter.setOnClickListener {
             txtResult.text = "${semSpinner.selectedItem.toString()} : ${subjectSpinner.selectedItem.toString()} : ${unitSpinner.selectedItem.toString()}"
 
+            lifecycleScope.launch {
+                val id = setId()
+                val p = RemoteProgram(id,edtitle.text.toString(),edprogram.text.toString(),semSpinner.selectedItem.toString(),subjectSpinner.selectedItem.toString(),unitSpinner.selectedItem.toString())
+                pViewModel.addPrograms(p)
+            }
+//            val p = RemoteProgram(edId.text.toString().toInt(),edtitle.text.toString(),edprogram.text.toString(),semSpinner.selectedItem.toString(),subjectSpinner.selectedItem.toString(),unitSpinner.selectedItem.toString())
 
-            val p = RemoteProgram(edId.text.toString().toInt(),edtitle.text.toString(),edprogram.text.toString(),semSpinner.selectedItem.toString(),subjectSpinner.selectedItem.toString(),unitSpinner.selectedItem.toString())
-
-            pViewModel.addPrograms(p)
            // pViewModel.addProgram(p)
 //RemoteProgram(9,"s","s","s","s","s",)
 
@@ -239,5 +246,40 @@ class AddProgramActivity : AppCompatActivity() {
         })
     }
 
+    suspend fun setId():Int {
 
-}
+        var newId = 1
+        val retrofitData = retrofitBuilder.getSpecific(
+            semSpinner.selectedItem.toString(),
+            subjectSpinner.selectedItem.toString(),
+            unitSpinner.selectedItem.toString()
+        )
+
+        try{   retrofitData.enqueue(object : Callback<List<RemoteProgram>?> {
+            @RequiresApi(Build.VERSION_CODES.N)
+            override fun onResponse(
+                call: Call<List<RemoteProgram>?>,
+                response: Response<List<RemoteProgram>?>
+            ) {
+                val list = response.body()
+                if (list != null) {
+                    list.maxWithOrNull(Comparator.comparingInt { it.id })?.id?.plus(1)?.let {
+                        newId = it
+                        println(newId)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<RemoteProgram>?>, t: Throwable) {
+                println("Retrofit Error : $t")
+            }
+        })
+    }catch (e : Exception){
+            println("Error Caught: $e")
+    }
+        delay(3000)
+      return newId
+        }
+    }
+
+
