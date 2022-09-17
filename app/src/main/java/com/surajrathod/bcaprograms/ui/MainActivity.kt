@@ -6,12 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.surajrathod.bcaprograms.ProgramApplication
 import com.surajrathod.bcaprograms.R
 import com.surajrathod.bcaprograms.adapter.ProgramAdapter
@@ -25,6 +28,7 @@ import com.surajrathod.bcaprograms.viewmodel.MainActivityViewModelFactory
 import com.surajrathod.bcaprograms.viewmodel.MainActvityViewModel
 import com.surajrathod.bcaprograms.viewmodel.PViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
@@ -39,9 +43,12 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var db : ProgramDatabase
 
+    lateinit var btnAdd : Button
+    var plist = mutableListOf<RemoteProgram>()
     val adapter = ProgramAdapter(){}
     lateinit var king : String
     lateinit var pViewModel : PViewModel
+    lateinit var fireStore : FirebaseFirestore
     val viewModel : MainActvityViewModel by viewModels{
         MainActivityViewModelFactory(ProgramApplication().database.getProgramDao())
     }
@@ -58,9 +65,52 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        fireStore = FirebaseFirestore.getInstance()
+        fireStore.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
+
+
         getData()
         pViewModel = ViewModelProvider(this).get(PViewModel::class.java)
 
+        btnAdd = findViewById(R.id.btnAddAll)
+
+        btnAdd.setOnClickListener {
+
+
+            /*
+            if(plist.size == 186){
+                try{
+
+                    var count = 0
+                    plist.forEach {
+                        val document = fireStore.collection("programs").document(it.id.toString())
+                        val handle = document.set(it)
+                        handle.addOnSuccessListener {
+                            count++
+                        }
+                        handle.addOnFailureListener {
+                            count--
+                        }
+                    }
+
+                    Toast.makeText(this@MainActivity,"Done $count",Toast.LENGTH_LONG).show()
+
+                }catch (e : Exception){
+                    Toast.makeText(this@MainActivity,e.message,Toast.LENGTH_LONG).show()
+                }
+            }else{
+                Toast.makeText(this@MainActivity,"Size is larger",Toast.LENGTH_LONG).show()
+            }
+            */
+
+
+
+             fireStore.collection("programs").get().continueWith {
+                 Toast.makeText(this@MainActivity,"${it.result.size()}",Toast.LENGTH_LONG).show()
+             }
+
+
+        }
        // pViewModel.getData()
         //Toast.makeText(this,"${pViewModel.king}",Toast.LENGTH_LONG).show()
 
@@ -158,7 +208,14 @@ class MainActivity : AppCompatActivity() {
 //                king = body[0].title.toString()
 //                Toast.makeText(this@MainActivity,"$king",Toast.LENGTH_LONG).show()
 
+                if(plist.isEmpty())
+                plist.addAll(body)
+
+
                 adapter.submitList(body)
+
+                if(plist.isNotEmpty())
+                Toast.makeText(this@MainActivity,"Data Loaded ${plist.size}",Toast.LENGTH_SHORT).show()
 
 
             }

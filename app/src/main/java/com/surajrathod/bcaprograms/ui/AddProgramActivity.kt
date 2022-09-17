@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.surajrathod.bcaprograms.ProgramApplication
 import com.surajrathod.bcaprograms.R
 import com.surajrathod.bcaprograms.adapter.ProgramAdapter
@@ -30,7 +32,8 @@ import kotlinx.android.synthetic.main.activity_add_program.*
 import kotlinx.coroutines.*
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.Exception
+
+import kotlin.Exception
 
 class AddProgramActivity : AppCompatActivity() {
 
@@ -45,6 +48,10 @@ class AddProgramActivity : AppCompatActivity() {
 lateinit var retrofitBuilder : ApiInterface
     val adapter = ProgramAdapter(){}
 
+    lateinit var fireStore : FirebaseFirestore
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_program)
@@ -56,12 +63,41 @@ retrofitBuilder = Retrofit.Builder()
         pViewModel = ViewModelProvider(this).get(PViewModel::class.java)
 
 
+        fireStore = FirebaseFirestore.getInstance()
+        fireStore.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
+
         btnEnterView.setOnClickListener {
             //recyclerView(semSpinner.selectedItem.toString(),subjectSpinner.selectedItem.toString(),unitSpinner.selectedItem.toString())
 
             getData()
             rvViewProgram.layoutManager = LinearLayoutManager(this@AddProgramActivity)
             rvViewProgram.adapter = adapter
+        }
+
+        btnAddToFireStore.setOnClickListener {
+            val p = RemoteProgram(Integer.parseInt(edFireStoreId.text.toString()),edtitle.text.toString(),edprogram.text.toString(),semSpinner.selectedItem.toString(),subjectSpinner.selectedItem.toString(),unitSpinner.selectedItem.toString())
+
+            try{
+                val document = fireStore.collection("programs").document(p.id.toString())
+                document.set(p).addOnSuccessListener {
+                    Toast.makeText(this@AddProgramActivity,"Program Added",Toast.LENGTH_LONG).show()
+                }.addOnFailureListener {
+                    Toast.makeText(this@AddProgramActivity,"${it.message}",Toast.LENGTH_LONG).show()
+                }
+
+            }catch ( e : Exception){
+                Toast.makeText(this@AddProgramActivity,e.message,Toast.LENGTH_LONG).show()
+            }
+        }
+
+
+        btnDeleteToFireStore.setOnClickListener {
+            val document = fireStore.collection("programs").document(edFireStoreDeleteId.text.toString())
+            document.delete().addOnSuccessListener {
+                Toast.makeText(this@AddProgramActivity,"${document.id} Deleted ",Toast.LENGTH_LONG).show()
+            }.addOnFailureListener {
+                Toast.makeText(this@AddProgramActivity,"${it.message}",Toast.LENGTH_LONG).show()
+            }
         }
 
 

@@ -116,6 +116,61 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edFireStoreId"
+            android:hint="Enter FireStore Id"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtResult"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnAddToFireStore"
+            android:layout_margin="20dp"
+            android:textAllCaps="false"
+            android:text="Add To FireStore"
+            android:textColor="@color/white"
+            android:backgroundTint="#ff0065ff"
+            app:layout_constraintTop_toBottomOf="@id/edFireStoreId"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/deleteLayout"
+            app:layout_constraintTop_toBottomOf="@id/btnAddToFireStore"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/edFireStoreDeleteId"
+                android:hint="Enter FireStore Delete Id"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDeleteToFireStore"
+                android:layout_margin="20dp"
+                android:textAllCaps="false"
+                android:text="Delete To FireStore"
+                android:textColor="@color/white"
+                android:backgroundTint="#FF0048"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

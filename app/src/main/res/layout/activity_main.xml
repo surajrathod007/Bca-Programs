@@ -36,5 +36,15 @@
             app:layout_constraintRight_toRightOf="parent"
              />
 
+        <Button
+            android:layout_margin="10dp"
+            android:id="@+id/btnAddAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add To Firestore"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
